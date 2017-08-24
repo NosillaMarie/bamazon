@@ -27,3 +27,7 @@ CREATE TABLE products (
 INSERT INTO products (product_name, department_name, sale_price, availible_quantity)
 	VALUES('30oz Yeti Tumbler', 'Kitchen & Dining', 29.99, 78),
 				  ('Custom Monogram Vinyl Sticker', 'Handmade Home Decor', 6.00, 99);
+                  
+                  
+DELETE from products
+	WHERE item_id = 12;
