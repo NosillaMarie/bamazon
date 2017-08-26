@@ -6,7 +6,7 @@ CREATE TABLE products (
 	item_id INTEGER (11) auto_increment not null,
     product_name VARCHAR(50) not null,
     department_name VARCHAR(50) not null,
-    sale_price INTEGER(11) not null,
+    sale_price DECIMAL(10, 2) not null,
     availible_quantity integer(11),
     PRIMARY KEY(item_id)
     );
@@ -31,3 +31,12 @@ INSERT INTO products (product_name, department_name, sale_price, availible_quant
                   
 DELETE from products
 	WHERE item_id = 12;
+    
+
+    
+    ALTER TABLE products MODIFY COLUMN sale_price DECIMAL (10, 2); 
+    
+    drop table if exists products;
+    
+    
+    

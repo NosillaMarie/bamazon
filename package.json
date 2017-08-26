@@ -1,0 +1,33 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "Bamazon is like an Amazon app where a customer can purchase items and inventory is tracked.",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NosillaMarie/bamazon.git"
+  },
+  "keywords": [
+    "amazon",
+    "shopping",
+    "mysql",
+    "database",
+    "node",
+    "javascript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NosillaMarie/bamazon/issues"
+  },
+  "homepage": "https://github.com/NosillaMarie/bamazon#readme",
+  "dependencies": {
+    "cli-table": "^0.3.1",
+    "console.table": "^0.9.1",
+    "inquirer": "^3.2.2",
+    "mysql": "^2.14.1"
+  }
+}
