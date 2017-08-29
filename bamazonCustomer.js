@@ -1,7 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require("cli-table");
-var prompt = require("prompt");
+
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -11,15 +11,17 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
-var itemPurchased = [];
 
 connection.connect(function (err) {
     if (err) {
         throw err
+        readProducts();
     };
     console.log("Connected as ID: " + connection.threadId);
 });
-var readProducts = function () {
+
+
+function readProducts() {
     console.log('Displaying all Products Available...\n');
     connection.query('SELECT * FROM products', function (err, res) {
         if (err) {
@@ -42,17 +44,10 @@ var readProducts = function () {
         console.log(table.toString());
 
         inquirer.prompt([{
-                name: "internal_id",
+                name: "item",
                 type: "input",
-                message: "What is the ID of the product you would like to purchase?",
+                message: "What is the ID of the product you would like to purchase?"
 
-                validate: function (value) {
-                    if (isNaN(value) === false) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
     }, {
                 name: "quantity",
                 type: "input",
@@ -67,28 +62,39 @@ var readProducts = function () {
                 }
     }])
             .then(function (answer) {
-                var selectedItem = answer.internal_id;
-                var purchaseQuantity = answer.quantity;
-                purchase(selectedItem, purchaseQuantity);
-            });
+                var selectedItem;
+
+                for (var i = 0; i < res.length; i++) {
+                    if (res[i].item_id === answer.item) {
+                        selectedItem = res[i];
+                        console.log(res[i]);
+                    }
+                }
+
+                if (selectedItem.availible_quantity > parseInt(answer.quantity)) {
+
+                    connection.query(
+                        "UPDATE products SET ? WHERE ?", [
+                            {
+                                availible_quantity: ((selectedItem.availible_quantity) - (parseInt(answer.quantity)))
+                                                }, {
+                                item_id: selectedItem.id
+                                                }
+                                            ],
+                        function (err) {
+                            if (err) {
+                                throw err
+                            };
+                            console.log("Your total is: $");
+
+                            readProducts();
+                        }
+                    );
+                } else {
+                    console.log("Order qty exceeds availible qty please select a number <= :" + selectedItem.availible_quantity);
+
+                    readProducts();
+                }
+            })
     });
 }
-
-function purchase(ID, quantityNeeded) {
-    connection.query("SELECT * FROM products WHERE item_id = " + ID, function (err, res) {
-        if (err) throw err;
-
-        if (quantityNeeded <= res[0].availible_quantity) {
-            var total = res[0].price * quantityNeeded;
-
-            console.log("Your total is $" + total + ". Thank you, come again!");
-
-            connection.query("UPDATE products SET availible_quantity = availible_quantity -" + quantityNeeded + "WHERE item_id = " + ID);
-        } else {
-            console.log("Quantity on hand does not meet your needs!");
-        };
-        readProducts();
-    })
-}
-
-readProducts();
