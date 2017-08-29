@@ -28,6 +28,7 @@
     "cli-table": "^0.3.1",
     "console.table": "^0.9.1",
     "inquirer": "^3.2.2",
-    "mysql": "^2.14.1"
+    "mysql": "^2.14.1",
+    "prompt": "^1.0.0"
   }
 }
