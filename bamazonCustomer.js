@@ -14,7 +14,7 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw err
-    readProducts();
+
     console.log("Connected as ID: " + connection.threadId);
 });
 
@@ -36,7 +36,7 @@ function readProducts() {
             ]
         });
         for (var i = 0; i < res.length; i++) {
-            table.push([res[i].item_id, res[i].product_name, res[i].department_name, res[i].sale_price, res[i].availible_quantity
+            table.push([res[i].item_id, res[i].product_name, res[i].department_name, res[i].sale_price, res[i].available_quantity
                        ]);
         }
         console.log(table.toString());
@@ -67,7 +67,7 @@ function readProducts() {
                 }
     }])
             .then(function (answer) {
-                var query = "SELECT availible_quantity FROM products WHERE ?"
+                var query = "SELECT available_quantity FROM products WHERE ?"
                 var selectedItem;
 
                 for (var i = 0; i < res.length; i++) {
@@ -77,12 +77,12 @@ function readProducts() {
                     }
                 }
 
-                if (selectedItem.availible_quantity > parseInt(answer.quantity)) {
+                if (selectedItem.available_quantity > parseInt(answer.quantity)) {
 
                     connection.query(
                         "UPDATE products SET ? WHERE ?", [
                             {
-                                availible_quantity: ((selectedItem.availible_quantity) - (parseInt(answer.quantity)))
+                                available_quantity: ((selectedItem.available_quantity) - (parseInt(answer.quantity)))
                                                 }, {
                                 item_id: selectedItem.item_id
                                                 }
@@ -97,7 +97,7 @@ function readProducts() {
                         }
                     );
                 } else {
-                    console.log("Order qty exceeds availible qty please select a number <= :" + selectedItem.availible_quantity);
+                    console.log("Order qty exceeds available qty please select a number <= :" + selectedItem.avaiaible_quantity);
 
                     readProducts();
                 }

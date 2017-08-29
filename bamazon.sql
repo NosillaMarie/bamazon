@@ -38,5 +38,4 @@ DELETE from products
     
     drop table if exists products;
     
-    
-    
+    ALTER TABLE products CHANGE availible_quantity  available_quantity INTEGER(11);
