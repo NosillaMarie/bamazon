@@ -13,10 +13,8 @@ var connection = mysql.createConnection({
 
 
 connection.connect(function (err) {
-    if (err) {
-        throw err
-        readProducts();
-    };
+    if (err) throw err
+    readProducts();
     console.log("Connected as ID: " + connection.threadId);
 });
 
@@ -46,7 +44,14 @@ function readProducts() {
         inquirer.prompt([{
                 name: "item",
                 type: "input",
-                message: "What is the ID of the product you would like to purchase?"
+                message: "What is the ID of the product you would like to purchase?",
+                validate: function (value) {
+                    if (isNaN(value) === false) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
 
     }, {
                 name: "quantity",
@@ -62,6 +67,7 @@ function readProducts() {
                 }
     }])
             .then(function (answer) {
+                var query = "SELECT availible_quantity FROM products WHERE ?"
                 var selectedItem;
 
                 for (var i = 0; i < res.length; i++) {
@@ -78,7 +84,7 @@ function readProducts() {
                             {
                                 availible_quantity: ((selectedItem.availible_quantity) - (parseInt(answer.quantity)))
                                                 }, {
-                                item_id: selectedItem.id
+                                item_id: selectedItem.item_id
                                                 }
                                             ],
                         function (err) {
@@ -98,3 +104,4 @@ function readProducts() {
             })
     });
 }
+readProducts();
