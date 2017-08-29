@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require("cli-table");
+var prompt = require("prompt");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -10,13 +11,14 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
+var itemPurchased = [];
+
 connection.connect(function (err) {
     if (err) {
         throw err
     };
     console.log("Connected as ID: " + connection.threadId);
 });
-
 var readProducts = function () {
     console.log('Displaying all Products Available...\n');
     connection.query('SELECT * FROM products', function (err, res) {
@@ -70,6 +72,23 @@ var readProducts = function () {
                 purchase(selectedItem, purchaseQuantity);
             });
     });
+}
+
+function purchase(ID, quantityNeeded) {
+    connection.query("SELECT * FROM products WHERE item_id = " + ID, function (err, res) {
+        if (err) throw err;
+
+        if (quantityNeeded <= res[0].availible_quantity) {
+            var total = res[0].price * quantityNeeded;
+
+            console.log("Your total is $" + total + ". Thank you, come again!");
+
+            connection.query("UPDATE products SET availible_quantity = availible_quantity -" + quantityNeeded + "WHERE item_id = " + ID);
+        } else {
+            console.log("Quantity on hand does not meet your needs!");
+        };
+        readProducts();
+    })
 }
 
 readProducts();
