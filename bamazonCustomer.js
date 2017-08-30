@@ -3,6 +3,7 @@ var inquirer = require("inquirer");
 var Table = require("cli-table");
 
 
+
 var connection = mysql.createConnection({
     host: "localhost",
     port: "3306",
@@ -19,7 +20,7 @@ connection.connect(function (err) {
 });
 
 
-function readProducts() {
+function orderProducts() {
     console.log('Displaying all Products Available...\n');
     connection.query('SELECT * FROM products', function (err, res) {
         if (err) {
@@ -41,41 +42,52 @@ function readProducts() {
         }
         console.log(table.toString());
 
+
         inquirer.prompt([{
-                name: "item",
-                type: "input",
-                message: "What is the ID of the product you would like to purchase?",
-                validate: function (value) {
-                    if (isNaN(value) === false) {
-                        return true;
-                    } else {
-                        return false;
+                    name: "item",
+                    type: "input",
+                    message: "What is the ID of the product you would like to purchase?",
+                    validate: function (value) {
+                        if (isNaN(value) === false) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
-                }
 
     }, {
-                name: "quantity",
-                type: "input",
-                message: "Enter the quantity you would like to purchase: ",
+                    name: "quantity",
+                    type: "input",
+                    message: "Enter the quantity you would like to purchase: ",
 
-                validate: function (value) {
-                    if (isNaN(value) === false) {
-                        return true;
-                    } else {
-                        return false;
+                    validate: function (value) {
+                        if (isNaN(value) === false) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
-                }
-    }])
+    }
+                        ])
             .then(function (answer) {
+                console.log("foo");
                 var query = "SELECT available_quantity FROM products WHERE ?"
                 var selectedItem;
 
                 for (var i = 0; i < res.length; i++) {
-                    if (res[i].item_id === answer.item) {
+                    if (res[i].item_id == answer.item) {
                         selectedItem = res[i];
                         console.log(res[i]);
+                        console.log(selectedItem);
                     }
+                    //                    else {
+                    //                        //                        console.log(answer.item);
+                    //                        //                        console.log(res[i].item_id);
+                    //                        console.log(selectedItem);
+                    //                    }
                 }
+                //                console.log(query.sql);
+
 
                 if (selectedItem.available_quantity > parseInt(answer.quantity)) {
 
@@ -91,17 +103,17 @@ function readProducts() {
                             if (err) {
                                 throw err
                             };
-                            console.log("Your total is: $");
+                            console.log("Your total is: $ " + (selectedItem.sale_price) * (parseInt(answer.quantity)));
 
-                            readProducts();
+                            orderProducts();
                         }
                     );
                 } else {
-                    console.log("Order qty exceeds available qty please select a number <= :" + selectedItem.avaiaible_quantity);
+                    console.log("Order qty exceeds available qty please select a number <= :" + selectedItem.avaiable_quantity);
 
-                    readProducts();
+                    orderProducts();
                 }
             })
     });
 }
-readProducts();
+orderProducts();
