@@ -70,23 +70,17 @@ function orderProducts() {
     }
                         ])
             .then(function (answer) {
-                console.log("foo");
                 var query = "SELECT available_quantity FROM products WHERE ?"
                 var selectedItem;
 
                 for (var i = 0; i < res.length; i++) {
                     if (res[i].item_id == answer.item) {
                         selectedItem = res[i];
-                        console.log(res[i]);
-                        console.log(selectedItem);
+                        console.log("Item ID Selected:" + res[i].item_id + "\n" + "Name of Item Ordered: " +
+                            res[i].product_name + "\n" + "Quantity Ordered: " + answer.quantity);
+                        console.log("Thank you for shopping at Bamazon!");
                     }
-                    //                    else {
-                    //                        //                        console.log(answer.item);
-                    //                        //                        console.log(res[i].item_id);
-                    //                        console.log(selectedItem);
-                    //                    }
                 }
-                //                console.log(query.sql);
 
 
                 if (selectedItem.available_quantity > parseInt(answer.quantity)) {
@@ -105,7 +99,19 @@ function orderProducts() {
                             };
                             console.log("Your total is: $ " + (selectedItem.sale_price) * (parseInt(answer.quantity)));
 
-                            orderProducts();
+                            inquirer.prompt([{
+                                    name: "confirm",
+                                    type: "confirm",
+                                    message: "Whould you like to order something else?",
+                                    default: true
+                            }])
+                                .then(function (answers) {
+                                    if (answers.confirm) {
+                                        orderProducts();
+                                    } else {
+                                        connection.end();
+                                    }
+                                })
                         }
                     );
                 } else {
